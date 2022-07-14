@@ -1,0 +1,26 @@
+{
+  "name": "helsinki_citybike_app_backend",
+  "version": "1.0.0",
+  "description": "Backend for Helsinki citybike app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "build": "tsc --project .",
+    "server": "nodemon --verbose --watch \"server\" --ext \"ts,json\" --exec ts-node src/server.ts",
+    "dev": "concurrently \"npm run server\""
+  },
+  "author": "MMu",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.0.3",
+    "@types/sqlite3": "^3.1.8",
+    "concurrently": "^7.2.2",
+    "nodemon": "^2.0.19",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "sqlite3": "^5.0.8"
+  }
+}
