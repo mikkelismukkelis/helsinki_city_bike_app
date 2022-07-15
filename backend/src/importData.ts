@@ -36,8 +36,8 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
   //   Looping through all files, validate data and insert to database
   for (const file of files) {
-    // lets skip imported foder
-    if (file === 'imported') return
+    // lets skip imported foder and readme.txt
+    if (file === 'imported' || file === 'readme.txt') return
 
     const importFile = path.join(importDirectory, file)
 

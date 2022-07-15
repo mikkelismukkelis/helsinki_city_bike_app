@@ -1,0 +1,1 @@
+This folder is scanned when server starts up. Then csv files are read and imported to database.
