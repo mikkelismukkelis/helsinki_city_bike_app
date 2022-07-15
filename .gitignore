@@ -4,4 +4,4 @@
 db.sqlite
 **/dist
 .csv
-**/.env
+**/.csv
