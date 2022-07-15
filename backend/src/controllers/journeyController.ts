@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express'
 
-import { getRandom } from '../database/database'
+// import { getRandom } from '../database/database'
 
 // GET ALL JOURNEYS
 export const getJourneys: RequestHandler = async (req, res, _next) => {
-  getRandom()
+  // getRandom()
   res.json({ journey: 'ykkönen' })
   //   const checkstring: string = req.body.checkstring
 

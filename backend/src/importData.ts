@@ -2,8 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import { parse } from 'csv-parse'
 
+import { connectToDatabase } from './database/database'
+
 //import directory
 const importDirectory = path.join(__dirname, 'data_import')
+// directory where successfully imported files are moved
+const alreadyImportDirectory = path.join(__dirname, 'data_import', 'imported')
 
 // Journey data validation rules here, return true or false
 const validateJourneyData = (data: string[]) => {
@@ -16,7 +20,7 @@ const validateJourneyData = (data: string[]) => {
   if (distance < 10) return false
 
   // if duration less than 10s, skip
-  if (duration < 10) return false
+  if (duration < 1000) return false
 
   //   If all validations passed, return true
   return true
@@ -37,6 +41,9 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
     const importFile = path.join(importDirectory, file)
 
+    // Coonnetc to database or create new.
+    const db = connectToDatabase()
+
     fs.createReadStream(importFile)
       .pipe(parse({ delimiter: ',', from_line: 2 }))
       .on('data', (row) => {
@@ -45,38 +52,32 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
         // If valid data, insert to database
         if (isValidData) {
-          console.log('data', row)
+          db.serialize(() => {
+            db.run(
+              `INSERT OR REPLACE INTO journey_data VALUES (?, ?, ? , ?, ?, ?, ?, ?)`,
+              [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]],
+              function (error) {
+                if (error) {
+                  return console.log(error.message)
+                }
+                console.log(`Inserted a row with the id: ${this.lastID}`)
+              }
+            )
+          })
         }
       })
       .on('end', () => {
-        console.log(`${importFile} imported`)
+        // Finally move (with rename) imported file to imported -folder
+        let newPath = path.join(alreadyImportDirectory, file)
+
+        fs.rename(importFile, newPath, (err) => {
+          if (err) console.log('Error in moving file to imported -folder: ', err)
+        })
+
+        console.log(`${importFile} readed. Inserting rows to database. Moved file to imported folder.`)
       })
       .on('error', (error) => {
         console.log(`Error in reading file: ${error.message}`)
       })
   }
 })
-
-// export const importJourneyData = fs.readdirSync(importDirectory).forEach((file) => {
-//   // lets skip imported foder
-//   if (file === 'imported') return
-
-//   console.log(file)
-
-//   const importFile = path.join(importDirectory, file)
-
-//   fs.readFileSync
-
-//   fs.createReadStream(importFile)
-//     .pipe(parse({ delimiter: ',', from_line: 2 }))
-//     .on('data', (row) => {
-//       console.log(row)
-//       // TODO: data import
-//     })
-//     .on('end', () => {
-//       console.log(`${importFile} imported`)
-//     })
-//     .on('error', (error) => {
-//       console.log(`Error in reading file: ${error.message}`)
-//     })
-// })
