@@ -20,39 +20,38 @@ const validateJourneyData = (data: string[]) => {
   if (distance < 10) return false
 
   // if duration less than 10s, skip
-  if (duration < 1000) return false
+  if (duration < 10) return false
 
   //   If all validations passed, return true
   return true
 }
 
-//function that reads import directory,  loops through files and imports data to db
-export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
-  // error in directory reading
-  if (err) return console.log('Error in scanning import directory: ' + err)
-
-  // If import directory has only "imported" folder (files size = 1) return
-  if (files.length === 1) return console.log('data_import directory did not contain any files...')
-
-  //   Looping through all files, validate data and insert to database
-  for (const file of files) {
-    // lets skip imported foder and readme.txt
-    if (file === 'imported' || file === 'readme.txt') return
-
-    const importFile = path.join(importDirectory, file)
-
+// Function that reads csv and inserts into database. Wrapped inside timeout
+const readCsvAndInsertDb = (importFile: string, file: string, timeout: number) => {
+  // This timeout is for making space between operations to keep memory usage under control
+  setTimeout(() => {
+    let journeyRecords: any[] = []
     // Coonnetc to database or create new.
     const db = connectToDatabase()
 
+    // create read stream and read it with parser
     fs.createReadStream(importFile)
       .pipe(parse({ delimiter: ',', from_line: 2 }))
-      .on('data', (row) => {
+      .on('data', (row: string[]) => {
         // Validate data
         const isValidData = validateJourneyData(row)
 
-        // If valid data, insert to database
+        // If valid data, push to journeyRecords array which is used for database insertions
         if (isValidData) {
-          db.serialize(() => {
+          journeyRecords.push(row)
+        }
+      })
+      .on('end', () => {
+        db.serialize(() => {
+          // Lets do database insertions in transaction for far better performance
+          db.exec('BEGIN')
+
+          for (const row of journeyRecords) {
             db.run(
               `INSERT OR REPLACE INTO journey_data VALUES (?, ?, ? , ?, ?, ?, ?, ?)`,
               [row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]],
@@ -60,24 +59,49 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
                 if (error) {
                   return console.log(error.message)
                 }
-                console.log(`Inserted a row with the id: ${this.lastID}`)
+                // console.log(`Inserted a row with the id: ${this.lastID}`)
               }
             )
-          })
-        }
-      })
-      .on('end', () => {
-        // Finally move (with rename) imported file to imported -folder
+          }
+
+          db.exec('COMMIT')
+        })
+
+        // move (with rename) imported file to imported -folder
         let newPath = path.join(alreadyImportDirectory, file)
 
         fs.rename(importFile, newPath, (err) => {
           if (err) console.log('Error in moving file to imported -folder: ', err)
         })
 
-        console.log(`${importFile} readed. Inserting rows to database. Moved file to imported folder.`)
+        // console.log(`${importFile} readed. Inserting rows to database. Moved file to imported folder.`)
+        console.log(`Journey records added to database from file: ${file}, rows: ${journeyRecords.length}`)
       })
       .on('error', (error) => {
         console.log(`Error in reading file: ${error.message}`)
       })
+  }, timeout)
+}
+
+// main function that reads import directory,  loops through files and calls function to imports data to db
+export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
+  // error in directory reading
+  if (err) return console.log('Error in scanning import directory: ' + err)
+
+  // If import directory has only "imported" folder (files size = 1) return
+  if (files.length === 1) return console.log('data_import directory did not contain any files...')
+
+  // Looping through all files, validate data and insert to database
+  //   Timeout is "purkkaviritys" for memory management: we need to give enough time for reading data and inserting to db
+  let timeout = 0
+  for (const file of files) {
+    // lets skip imported foder and readme.txt
+    if (file === 'imported' || file === 'readme.txt') return
+
+    const importFile = path.join(importDirectory, file)
+
+    readCsvAndInsertDb(importFile, file, timeout)
+
+    timeout += 30000
   }
 })
