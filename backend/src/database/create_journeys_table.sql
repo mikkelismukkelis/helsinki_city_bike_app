@@ -1,6 +1,0 @@
--- SQLite
-CREATE TABLE IF NOT EXISTS journeys (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL
-)

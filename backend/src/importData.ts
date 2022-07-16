@@ -88,8 +88,8 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
   // error in directory reading
   if (err) return console.log('Error in scanning import directory: ' + err)
 
-  // If import directory has only "imported" folder (files size = 1) return
-  if (files.length === 1) return console.log('data_import directory did not contain any files...')
+  // If import directory has only readme.txt and "imported" folder (files size = 1) return
+  if (files.length === 2) return console.log('data_import directory did not contain any csv files to import...')
 
   // Looping through all files, validate data and insert to database
   //   Timeout is "purkkaviritys" for memory management: we need to give enough time for reading data and inserting to db

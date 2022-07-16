@@ -1,30 +1,21 @@
 import { RequestHandler } from 'express'
 
-// import { getRandom } from '../database/database'
+import { connectToDatabase } from '../database/database'
 
 // GET ALL JOURNEYS
-export const getJourneys: RequestHandler = async (req, res, _next) => {
-  // getRandom()
-  res.json({ journey: 'ykkönen' })
-  //   const checkstring: string = req.body.checkstring
+export const getJourneys: RequestHandler = (_req, res, _next) => {
+  const db = connectToDatabase()
 
-  //   if (checkstring !== process.env.CHECKSTRING || !checkstring) {
-  //     return res.status(403).send({ message: 'so called password was wrong or missing' })
-  //   }
+  const sql =
+    'SELECT departure_station_name, return_station_name, covered_distance_m, duration_s FROM journey_data LIMIT 10'
 
-  //   try {
-  //     const pool = await getConnection()
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json(rows)
+  })
 
-  //     if (pool instanceof Error) {
-  //       return res.status(500).send({ message: 'error in database connection' })
-  //     } else {
-  //       // first check if email is found from database
-  //       const sqlResult = await pool.request().query(subscriptionQuerys.getAllSubscriptions)
-
-  //       res.json(sqlResult.recordset)
-  //     }
-  //   } catch (error) {
-  //     console.log('error', error)
-  //     res.status(500).send({ message: 'something went wrong in getSubscriptions function' })
-  //   }
+  db.close()
 }
