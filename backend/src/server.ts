@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 
 import journeyRoutes from './routes/journeyRoutes'
 
@@ -9,6 +10,12 @@ const PORT = process.env.PORT || 3001
 const app = express()
 
 app.use(express.json())
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+)
 
 // For serving build react frontend when publishing to some service
 app.use(express.static('./client'))

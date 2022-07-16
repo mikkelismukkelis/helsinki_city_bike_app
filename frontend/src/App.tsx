@@ -1,7 +1,13 @@
 import React from 'react'
 
+import JourneyData from './components/JourneyData'
+
 function App() {
-  return <div>here we go</div>
+  return (
+    <div>
+      <JourneyData />
+    </div>
+  )
 }
 
 export default App
