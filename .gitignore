@@ -5,3 +5,4 @@ db.sqlite
 **/dist
 *.csv
 **/*.csv
+frontend/build
