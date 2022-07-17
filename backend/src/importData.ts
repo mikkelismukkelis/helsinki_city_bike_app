@@ -11,8 +11,8 @@ const alreadyImportDirectory = path.join(__dirname, 'data_import', 'imported')
 
 // Journey data validation rules here, return true or false
 const validateJourneyData = (data: string[]) => {
-  // Journey distance (m) in position 6, parse to int
-  const distance = parseInt(data[6])
+  // Journey distance (m) in position 6, parse to int. SOme empty values found, then we put 0 as value
+  const distance = data[6] === '' ? 0 : parseInt(data[6])
   // Journey duration (s) in position 7, parse to int
   const duration = parseInt(data[7])
 
@@ -93,6 +93,7 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
   // Looping through all files, validate data and insert to database
   //   Timeout is "purkkaviritys" for memory management: we need to give enough time for reading data and inserting to db
+  console.log('Start importing data to database, please wait until all files have been processessed and imported')
   let timeout = 0
   for (const file of files) {
     // lets skip imported foder and readme.txt
@@ -102,6 +103,6 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
     readCsvAndInsertDb(importFile, file, timeout)
 
-    timeout += 30000
+    timeout += 40000
   }
 })
