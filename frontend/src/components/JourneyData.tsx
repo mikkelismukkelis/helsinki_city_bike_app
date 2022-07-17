@@ -11,8 +11,12 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
 import { visuallyHidden } from '@mui/utils'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 
 interface Data {
+  rowid: number
   departure_station_name: string
   return_station_name: string
   covered_distance_m: number
@@ -32,34 +36,7 @@ interface EnhancedTableProps {
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void
   order: Order
   orderBy: string
-  rowCount: number
 }
-
-// function createData(name: string, calories: number, fat: number, carbs: number, protein: number): Data {
-//   return {
-//     name,
-//     calories,
-//     fat,
-//     carbs,
-//     protein,
-//   }
-// }
-
-// const rows = [
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Donut', 452, 25.0, 51, 4.9),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-//   createData('Honeycomb', 408, 3.2, 87, 6.5),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//   createData('KitKat', 518, 26.0, 65, 7.0),
-//   createData('Lollipop', 392, 0.2, 98, 0.0),
-//   createData('Marshmallow', 318, 0, 81, 2.0),
-//   createData('Nougat', 360, 19.0, 9, 37.0),
-//   createData('Oreo', 437, 18.0, 63, 4.0),
-// ]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -110,7 +87,7 @@ const headCells: readonly HeadCell[] = [
 ]
 
 const EnhancedTableHead = (props: EnhancedTableProps) => {
-  const { order, orderBy, rowCount, onRequestSort } = props
+  const { order, orderBy, onRequestSort } = props
 
   const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property)
@@ -146,24 +123,33 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
 }
 
 const EnhancedTable = () => {
-  const test: Data = {
-    departure_station_name: 'departure_station_name',
-    return_station_name: 'return_station_name',
-    covered_distance_m: 666,
-    duration_s: 666,
+  const initData: Data = {
+    rowid: 0,
+    departure_station_name: 'Data being fetched',
+    return_station_name: '...',
+    covered_distance_m: 0,
+    duration_s: 0,
   }
 
-  const [rows, setRows] = useState<Data[]>([test])
+  const [rows, setRows] = useState<Data[]>([initData])
   const [order, setOrder] = useState<Order>('asc')
   const [orderBy, setOrderBy] = useState<keyof Data>('departure_station_name')
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(100)
+  const [activeButton, setActiveButton] = useState('button1')
 
   useEffect(() => {
     const fetchData = () => {
-      axios.get<Data[]>('http://localhost:3001/api/journeys').then((res) => {
-        setRows(res.data)
-      })
+      axios
+        .get<Data[]>('http://localhost:3001/api/journeys', {
+          params: {
+            beginLetter: 'A',
+            endLetter: 'H',
+          },
+        })
+        .then((res) => {
+          setRows(res.data)
+        })
     }
 
     fetchData()
@@ -173,10 +159,6 @@ const EnhancedTable = () => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
-  }
-
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    console.log('name', name)
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -191,12 +173,66 @@ const EnhancedTable = () => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
+  // Get new data from api and set to table
+  const clickAlphabetButton = (e: React.MouseEvent<unknown>, beginLetter: string, endLetter: string) => {
+    const target = e.target as HTMLButtonElement
+    axios
+      .get<Data[]>('http://localhost:3001/api/journeys', {
+        params: {
+          beginLetter,
+          endLetter,
+        },
+      })
+      .then((res) => {
+        setActiveButton(target.id)
+        setRows(res.data)
+      })
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Stack spacing={2} direction="row">
+        <Typography variant="h5">Departure station first letter: </Typography>
+        <Button
+          id="button1"
+          onClick={(event) => clickAlphabetButton(event, 'A', 'H')}
+          variant={activeButton === 'button1' ? 'contained' : 'outlined'}
+        >
+          A - H
+        </Button>
+        <Button
+          id="button2"
+          onClick={(event) => clickAlphabetButton(event, 'I', 'K')}
+          variant={activeButton === 'button2' ? 'contained' : 'outlined'}
+        >
+          I - K
+        </Button>
+        <Button
+          id="button3"
+          onClick={(event) => clickAlphabetButton(event, 'L', 'O')}
+          variant={activeButton === 'button3' ? 'contained' : 'outlined'}
+        >
+          L - O
+        </Button>
+        <Button
+          id="button4"
+          onClick={(event) => clickAlphabetButton(event, 'P', 'S')}
+          variant={activeButton === 'button4' ? 'contained' : 'outlined'}
+        >
+          P - S
+        </Button>
+        <Button
+          id="button5"
+          onClick={(event) => clickAlphabetButton(event, 'T', 'Ö')}
+          variant={activeButton === 'button5' ? 'contained' : 'outlined'}
+        >
+          T - Ö
+        </Button>
+      </Stack>
+      <Paper sx={{ width: '100%', mb: 2, marginTop: '30px' }}>
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} rowCount={1} />
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {rows
                 .slice()
@@ -206,16 +242,11 @@ const EnhancedTable = () => {
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.departure_station_name)}
-                      tabIndex={-1}
-                      key={row.departure_station_name}
-                    >
+                    <TableRow hover tabIndex={-1} key={row.rowid}>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.departure_station_name}
                       </TableCell>
-                      <TableCell align="right">{row.return_station_name}</TableCell>
+                      <TableCell align="left">{row.return_station_name}</TableCell>
                       <TableCell align="right">{row.covered_distance_m}</TableCell>
                       <TableCell align="right">{row.duration_s}</TableCell>
                     </TableRow>
@@ -234,7 +265,7 @@ const EnhancedTable = () => {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[50, 100, 200, 300, 500, 1000, 2000]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
