@@ -7,7 +7,7 @@ export const getJourneys: RequestHandler = (_req, res, _next) => {
   const db = connectToDatabase()
 
   const sql =
-    'SELECT departure_station_name, return_station_name, covered_distance_m, duration_s FROM journey_data LIMIT 10'
+    'SELECT rowid, departure_station_name, return_station_name, covered_distance_m, duration_s FROM journey_data LIMIT 10'
 
   db.all(sql, (err, rows) => {
     if (err) {
