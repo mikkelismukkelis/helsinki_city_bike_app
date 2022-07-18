@@ -11,14 +11,16 @@ export const connectToDatabase = () => {
       if (error) {
         return console.error(error.message)
       }
-      createTable(db)
+      createJourneyDataTable(db)
+      createStationListTable(db)
       console.log('Connected to the database successfully')
     })
     return db
   }
 }
 
-function createTable(db: Database) {
+// Journey data table
+function createJourneyDataTable(db: Database) {
   db.exec(`
   CREATE TABLE journey_data
   (
@@ -30,6 +32,30 @@ function createTable(db: Database) {
     return_station_name VARCHAR(255),
     covered_distance_m  INT,
     duration_s INT
+  )
+`)
+}
+
+// Stationlist csv headers
+// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+// station list table
+function createStationListTable(db: Database) {
+  db.exec(`
+  CREATE TABLE station_list
+  (
+    fid INT,
+    id  int,
+    nimi  VARCHAR(255),
+    namn  VARCHAR(255),
+    name  VARCHAR(255),
+    osoite VARCHAR(255),
+    adress VARCHAR(255),
+    kaupunki VARCHAR(255),
+    stad VARCHAR(255),
+    operaattor VARCHAR(255),
+    kapasiteet  INT,
+    x REAL,
+    y REAL
   )
 `)
 }
