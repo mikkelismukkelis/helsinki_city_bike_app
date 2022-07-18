@@ -14,6 +14,8 @@ import { visuallyHidden } from '@mui/utils'
 import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
+import LinearProgress from '@mui/material/LinearProgress'
+import Container from '@mui/material/Container'
 
 interface Data {
   rowid: number
@@ -76,13 +78,13 @@ const headCells: readonly HeadCell[] = [
     id: 'covered_distance_m',
     numeric: true,
     disablePadding: false,
-    label: 'Covered distance (m)',
+    label: 'Covered distance (km)',
   },
   {
     id: 'duration_s',
     numeric: true,
     disablePadding: false,
-    label: 'Duration (s)',
+    label: 'Duration (mins)',
   },
 ]
 
@@ -137,9 +139,12 @@ const EnhancedTable = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
   const [activeButton, setActiveButton] = useState('button1')
+  const [dataLoading, setDataLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = () => {
+      setDataLoading(true)
+
       axios
         .get<Data[]>('http://localhost:3001/api/journeys', {
           params: {
@@ -148,7 +153,17 @@ const EnhancedTable = () => {
           },
         })
         .then((res) => {
+          setDataLoading(false)
           setRows(res.data)
+        })
+        .catch((err) => {
+          console.log('Error in axios: ', err)
+          setDataLoading(false)
+
+          // TODO: if database is busy for example in data import, what we do?
+          if (err.response.data.error === 'SQLITE_BUSY: database is locked') {
+            console.log('DATABASE BUSY')
+          }
         })
     }
 
@@ -176,6 +191,9 @@ const EnhancedTable = () => {
   // Get new data from api and set to table
   const clickAlphabetButton = (e: React.MouseEvent<unknown>, beginLetter: string, endLetter: string) => {
     const target = e.target as HTMLButtonElement
+
+    setDataLoading(true)
+
     axios
       .get<Data[]>('http://localhost:3001/api/journeys', {
         params: {
@@ -185,96 +203,120 @@ const EnhancedTable = () => {
       })
       .then((res) => {
         setActiveButton(target.id)
+        setDataLoading(false)
         setRows(res.data)
+      })
+      .catch((err) => {
+        console.log('Error in axios: ', err)
+        setDataLoading(false)
+
+        // TODO: if database is busy for example in data import, what we do?
+        if (err.response.data.error === 'SQLITE_BUSY: database is locked') {
+          console.log('DATABASE BUSY')
+        }
       })
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Stack spacing={2} direction="row">
-        <Typography variant="h5">Departure station first letter: </Typography>
-        <Button
-          id="button1"
-          onClick={(event) => clickAlphabetButton(event, 'A', 'H')}
-          variant={activeButton === 'button1' ? 'contained' : 'outlined'}
-        >
-          A - H
-        </Button>
-        <Button
-          id="button2"
-          onClick={(event) => clickAlphabetButton(event, 'I', 'K')}
-          variant={activeButton === 'button2' ? 'contained' : 'outlined'}
-        >
-          I - K
-        </Button>
-        <Button
-          id="button3"
-          onClick={(event) => clickAlphabetButton(event, 'L', 'O')}
-          variant={activeButton === 'button3' ? 'contained' : 'outlined'}
-        >
-          L - O
-        </Button>
-        <Button
-          id="button4"
-          onClick={(event) => clickAlphabetButton(event, 'P', 'S')}
-          variant={activeButton === 'button4' ? 'contained' : 'outlined'}
-        >
-          P - S
-        </Button>
-        <Button
-          id="button5"
-          onClick={(event) => clickAlphabetButton(event, 'T', 'Ö')}
-          variant={activeButton === 'button5' ? 'contained' : 'outlined'}
-        >
-          T - Ö
-        </Button>
-      </Stack>
-      <Paper sx={{ width: '100%', mb: 2, marginTop: '30px' }}>
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-            <TableBody>
-              {rows
-                .slice()
-                .sort(getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`
+    <Container>
+      <Box sx={{ width: '100%' }}>
+        <Stack spacing={2} direction="row">
+          <Typography variant="h5">Departure station first letter: </Typography>
+          <Button
+            id="button1"
+            onClick={(event) => clickAlphabetButton(event, 'A', 'H')}
+            variant={activeButton === 'button1' ? 'contained' : 'outlined'}
+            disabled={dataLoading}
+          >
+            A - H
+          </Button>
+          <Button
+            id="button2"
+            onClick={(event) => clickAlphabetButton(event, 'I', 'K')}
+            variant={activeButton === 'button2' ? 'contained' : 'outlined'}
+            disabled={dataLoading}
+          >
+            I - K
+          </Button>
+          <Button
+            id="button3"
+            onClick={(event) => clickAlphabetButton(event, 'L', 'O')}
+            variant={activeButton === 'button3' ? 'contained' : 'outlined'}
+            disabled={dataLoading}
+          >
+            L - O
+          </Button>
+          <Button
+            id="button4"
+            onClick={(event) => clickAlphabetButton(event, 'P', 'S')}
+            variant={activeButton === 'button4' ? 'contained' : 'outlined'}
+            disabled={dataLoading}
+          >
+            P - S
+          </Button>
+          <Button
+            id="button5"
+            onClick={(event) => clickAlphabetButton(event, 'T', 'Ö')}
+            variant={activeButton === 'button5' ? 'contained' : 'outlined'}
+            disabled={dataLoading}
+          >
+            T - Ö
+          </Button>
+        </Stack>
+        {dataLoading ? (
+          <Box sx={{ marginTop: '200px', width: '80%' }}>
+            <Typography variant="h6">Loading journey data, please wait...</Typography>
+            <LinearProgress />
+          </Box>
+        ) : (
+          <Paper sx={{ width: '100%', mb: 2, marginTop: '30px' }}>
+            <TableContainer>
+              <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
+                <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+                <TableBody>
+                  {rows
+                    .slice()
+                    .sort(getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      const labelId = `enhanced-table-checkbox-${index}`
 
-                  return (
-                    <TableRow hover tabIndex={-1} key={row.rowid}>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.departure_station_name}
-                      </TableCell>
-                      <TableCell align="left">{row.return_station_name}</TableCell>
-                      <TableCell align="right">{row.covered_distance_m}</TableCell>
-                      <TableCell align="right">{row.duration_s}</TableCell>
+                      return (
+                        <TableRow hover tabIndex={-1} key={row.rowid}>
+                          <TableCell component="th" id={labelId} scope="row" padding="none">
+                            {row.departure_station_name}
+                          </TableCell>
+                          <TableCell align="left">{row.return_station_name}</TableCell>
+                          <TableCell align="right">{(row.covered_distance_m / 1000).toFixed(2)}</TableCell>
+                          <TableCell align="right">{(row.duration_s / 60).toFixed(1)}</TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows,
+                      }}
+                    >
+                      <TableCell colSpan={6} />
                     </TableRow>
-                  )
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[50, 100, 200, 300, 500, 1000, 2000]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[50, 100, 200, 300, 500, 1000, 2000]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        )}
+      </Box>
+    </Container>
   )
 }
 
