@@ -1,11 +1,11 @@
 import React from 'react'
 
-import JourneyData from './components/JourneyData'
+import JourneyDataView from './components/JourneyDataView'
 
 function App() {
   return (
     <div>
-      <JourneyData />
+      <JourneyDataView />
     </div>
   )
 }
