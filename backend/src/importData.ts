@@ -83,6 +83,19 @@ const readJourneysCsvAndInsertDb = (importFile: string, file: string, timeout: n
   }, timeout)
 }
 
+// function that fixes some missing station data
+const fixStationData = (data: string[]) => {
+  const kaupunki = data[7]
+
+  if (kaupunki === ' ') {
+    data[7] = 'Helsinki'
+    data[8] = 'Helsingfors'
+    data[9] = 'CityBike Finland'
+  }
+
+  return data
+}
+
 // Function that reads STATION LIST csv and inserts into database.
 const readStationListCsvAndInsertDb = (importFile: string, file: string) => {
   let stations: any[] = []
@@ -93,7 +106,9 @@ const readStationListCsvAndInsertDb = (importFile: string, file: string) => {
   fs.createReadStream(importFile)
     .pipe(parse({ delimiter: ',', from_line: 2 }))
     .on('data', (row: string[]) => {
-      stations.push(row)
+      // part of data is missing city and operator information. lets add those.
+      const fixedStation = fixStationData(row)
+      stations.push(fixedStation)
     })
     .on('end', () => {
       db.serialize(() => {
