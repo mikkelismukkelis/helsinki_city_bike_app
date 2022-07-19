@@ -1,0 +1,14 @@
+.navlink {
+  text-decoration: none;
+  color: white;
+}
+
+.navlink:hover {
+  color: gainsboro;
+}
+
+.active {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 3px;
+}
