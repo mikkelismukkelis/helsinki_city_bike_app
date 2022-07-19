@@ -22,3 +22,20 @@ export const getJourneys: RequestHandler = (req, res, _next) => {
 
   db.close()
 }
+
+// GET ALL STATIONS
+export const getStations: RequestHandler = (_req, res, _next) => {
+  const db = connectToDatabase()
+
+  const sql = `SELECT * FROM station_list ORDER BY nimi`
+
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json(rows)
+  })
+
+  db.close()
+}

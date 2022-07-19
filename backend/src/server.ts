@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 
-import journeyRoutes from './routes/journeyRoutes'
+import apiRoutes from './routes/apiRoutes'
 
 import { importJourneyData } from './importData'
 
@@ -20,7 +20,7 @@ app.use(
 // For serving build react frontend when publishing to some service
 app.use(express.static('./client'))
 
-app.use('/api', journeyRoutes)
+app.use('/api', apiRoutes)
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
 
