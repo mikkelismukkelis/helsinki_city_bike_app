@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, SetStateAction, Dispatch } from 'react'
 import axios from 'axios'
 
 import Box from '@mui/material/Box'
@@ -16,17 +16,15 @@ interface Data {
   duration_s: number
 }
 
-const JourneyDataView = () => {
-  const initData: Data = {
-    rowid: 0,
-    departure_station_name: 'Data being fetched',
-    return_station_name: '...',
-    covered_distance_m: 0,
-    duration_s: 0,
-  }
+interface Props {
+  rows: Data[]
+  setRows: Dispatch<SetStateAction<Data[]>>
+  initialDataLoading: boolean
+  activeButton: string
+  setActiveButton: Dispatch<SetStateAction<string>>
+}
 
-  const [rows, setRows] = useState<Data[]>([initData])
-  const [activeButton, setActiveButton] = useState('button1')
+const JourneyDataView = ({ rows, setRows, initialDataLoading, activeButton, setActiveButton }: Props) => {
   const [dataLoading, setDataLoading] = useState(false)
 
   // Function to get journey data. Used by useefect and alphabetical range buttons
@@ -60,11 +58,6 @@ const JourneyDataView = () => {
       })
   }
 
-  // Useeffect to get initial data
-  useEffect(() => {
-    getJourneyData('A', 'H')
-  }, [])
-
   // Get new data from api and set to table
   const clickAlphabetButton = (e: React.MouseEvent<unknown>, beginLetter: string, endLetter: string) => {
     const target = e.target as HTMLButtonElement
@@ -81,7 +74,7 @@ const JourneyDataView = () => {
           dataLoading={dataLoading}
         />
 
-        {dataLoading ? <DataLoadingProgress /> : <JourneyDataTable rows={rows} />}
+        {initialDataLoading || dataLoading ? <DataLoadingProgress /> : <JourneyDataTable rows={rows} />}
       </Box>
     </Container>
   )
