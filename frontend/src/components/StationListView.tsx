@@ -36,7 +36,6 @@ const StationListView = () => {
       .then((res) => {
         setDataLoading(false)
         setRows(res.data)
-        console.log(res.data)
       })
       .catch((err) => {
         console.log('Error in axios: ', err)

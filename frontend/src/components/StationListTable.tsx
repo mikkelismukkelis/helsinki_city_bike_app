@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
 import { visuallyHidden } from '@mui/utils'
+import TextField from '@mui/material/TextField'
 
 interface Data {
   fid: number
@@ -128,6 +129,13 @@ const StationListTable = ({ rows }: Props) => {
   const [orderBy, setOrderBy] = useState<keyof Data>('name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
+  const [filteredRows, setFilteredRows] = useState<Data[]>([])
+
+  const filterData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filterText = e.currentTarget.value
+    const filteredData = rows.filter((row) => row.nimi.toLowerCase().includes(filterText.toLowerCase()))
+    setFilteredRows(filteredData)
+  }
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -147,13 +155,33 @@ const StationListTable = ({ rows }: Props) => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
+  // FUnction return either all rows or filtered rows
+  const getRows = () => {
+    let selectedData: Data[] = []
+    if (filteredRows.length > 0) {
+      selectedData = filteredRows
+    } else {
+      selectedData = rows
+    }
+    return selectedData
+  }
+
   return (
     <Paper sx={{ width: '100%', mb: 2, marginTop: '30px' }}>
+      <TextField
+        id="station-filter"
+        label="Filter by Station name"
+        variant="outlined"
+        onChange={filterData}
+        size="small"
+        sx={{ marginBottom: '10px' }}
+      />
+
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
           <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
-            {rows
+            {getRows()
               .slice()
               .sort(getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -163,7 +191,7 @@ const StationListTable = ({ rows }: Props) => {
                 return (
                   <TableRow hover tabIndex={-1} key={row.id}>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.name}
+                      {row.nimi}
                     </TableCell>
                     <TableCell align="left">{row.osoite}</TableCell>
                     <TableCell align="left">{row.kaupunki}</TableCell>
