@@ -165,7 +165,8 @@ export const importJourneyData = fs.readdir(importDirectory, (err, files) => {
 
     const importFile = path.join(importDirectory, file)
 
-    if (file === 'Helsingin_ja_Espoon_kaupunkipy%C3%B6r%C3%A4asemat_avoin.csv') {
+    // If filename includes "asemat" word, then presumably station list, otherwise joyrney data
+    if (file.toLowerCase().includes('asemat')) {
       readStationListCsvAndInsertDb(importFile, file)
     } else {
       readJourneysCsvAndInsertDb(importFile, file, timeout)
