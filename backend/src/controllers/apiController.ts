@@ -24,10 +24,31 @@ export const getJourneys: RequestHandler = (req, res, _next) => {
 }
 
 // GET ALL STATIONS
+// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 export const getStations: RequestHandler = (_req, res, _next) => {
   const db = connectToDatabase()
 
   const sql = `SELECT * FROM station_list ORDER BY nimi`
+
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json(rows)
+  })
+
+  db.close()
+}
+
+// GET ONE STATION BY ID
+// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+export const getStationById: RequestHandler = (req, res, _next) => {
+  const stationId = req.params.id
+
+  const db = connectToDatabase()
+
+  const sql = `SELECT * FROM station_list WHERE ID=${stationId}`
 
   db.all(sql, (err, rows) => {
     if (err) {
