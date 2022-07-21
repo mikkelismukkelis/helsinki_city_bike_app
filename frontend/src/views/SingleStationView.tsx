@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-import { Container, Button, Typography, Box } from '@mui/material'
+import { Container, Button } from '@mui/material'
 
 import MapComponent from '../components/MapComponent'
+import SingleStationInfo from '../components/SingleStationInfo'
 
 const SingleStationView = () => {
   const [data, setData] = useState<any[]>([])
@@ -35,24 +36,11 @@ const SingleStationView = () => {
       })
   }, [])
 
-  //   Check if data is ready, if not return null. Data loading -message is in MapComponent
+  //   Check if data is ready, if yes return info component, if not return null. Data loading -message is in MapComponent
   const getInformation = () => {
     if (data.length === 0) return null
 
-    return (
-      <Box>
-        <Typography variant="h6">{'Station name: ' + data[0].nimi}</Typography>
-        <Typography variant="h6">{'Station address: ' + data[0].osoite}</Typography>
-        <Typography variant="h6">{'Count of journeys started here: ' + data[1].departure_count}</Typography>
-        <Typography variant="h6">{'Count of journeys ended here: ' + data[2].return_count}</Typography>
-        <Typography variant="h6">
-          {'Journey average distance when started from here: ' + parseInt(data[3].average_distance_departure) + 'm'}
-        </Typography>
-        <Typography variant="h6">
-          {'Journey average distance when ended to here: ' + parseInt(data[4].average_distance_return) + 'm'}
-        </Typography>
-      </Box>
-    )
+    return <SingleStationInfo data={data} />
   }
 
   return (
