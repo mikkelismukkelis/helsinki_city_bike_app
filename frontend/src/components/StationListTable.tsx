@@ -12,6 +12,10 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
 import { visuallyHidden } from '@mui/utils'
 import TextField from '@mui/material/TextField'
+import { Button, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
+
+import { InfoOutlined } from '@mui/icons-material'
 
 interface Data {
   fid: number
@@ -47,7 +51,7 @@ const headCells: readonly HeadCell[] = [
     id: 'nimi',
     numeric: false,
     disablePadding: true,
-    label: 'Name',
+    label: 'Name (click name for detailed information)',
   },
   {
     id: 'osoite',
@@ -186,12 +190,15 @@ const StationListTable = ({ rows }: Props) => {
               .sort(getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`
+                const labelId: string = `enhanced-table-checkbox-${index}`
 
                 return (
                   <TableRow hover tabIndex={-1} key={row.id}>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.nimi}
+                      <Link className="details-link" to={`/singlestation/${row.id}`}>
+                        {row.nimi}
+                        <InfoOutlined sx={{ marginLeft: '10px' }} fontSize="small" />
+                      </Link>
                     </TableCell>
                     <TableCell align="left">{row.osoite}</TableCell>
                     <TableCell align="left">{row.kaupunki}</TableCell>

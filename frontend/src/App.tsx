@@ -7,6 +7,8 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Navbar from './components/Navbar'
 import JourneyDataView from './components/JourneyDataView'
 import StationListView from './components/StationListView'
+import MapComponent from './components/MapComponent'
+import SingleStationView from './components/SingleStationView'
 
 interface Data {
   rowid: number
@@ -81,6 +83,7 @@ function App() {
             }
           />
           <Route path="/stations" element={<StationListView />} />
+          <Route path="/singlestation/:stationId" element={<SingleStationView />} />
         </Routes>
       </BrowserRouter>
     </div>

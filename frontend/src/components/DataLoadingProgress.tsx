@@ -6,7 +6,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 const DataLoadingProgress = () => {
   return (
     <Box sx={{ marginTop: '200px', width: '80%' }}>
-      <Typography variant="h6">Loading journey data, please wait...</Typography>
+      <Typography variant="h6">Loading data, please wait...</Typography>
       <LinearProgress />
     </Box>
   )
