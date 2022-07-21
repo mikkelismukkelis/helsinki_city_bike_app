@@ -88,6 +88,32 @@ const getReturnAvgDistance = async (stationId: string) => {
   return returnValue as any[]
 }
 
+// Get calculated values for single station view
+const getTop5ReturnStations = async (stationId: string) => {
+  const returnValue = await queryDb(
+    `SELECT return_station_name, return_station_id, count(*) AS return_count 
+FROM journey_data 
+WHERE departure_station_id = '${stationId}'
+GROUP BY return_station_name, return_station_id
+ORDER BY return_count DESC
+LIMIT 5`
+  )
+  return returnValue as any[]
+}
+
+// Get calculated values for single station view
+const getTop5DepartureStations = async (stationId: string) => {
+  const returnValue = await queryDb(
+    `SELECT departure_station_name, departure_station_id, count(*) AS departure_count 
+FROM journey_data 
+WHERE return_station_id = '${stationId}'
+GROUP BY departure_station_name, departure_station_id
+ORDER BY departure_count DESC
+LIMIT 5`
+  )
+  return returnValue as any[]
+}
+
 // GET ONE STATION BY ID
 // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 export const getStationById: RequestHandler = async (req, res, _next) => {
@@ -103,6 +129,10 @@ export const getStationById: RequestHandler = async (req, res, _next) => {
 
   const returnAvgDistance = await getReturnAvgDistance(stationId)
 
+  const top5ReturnStations = await getTop5ReturnStations(stationId)
+
+  const top5DepartureStations = await getTop5DepartureStations(stationId)
+
   // all station information and merge all calculated results, send to client
   const sql = `SELECT * FROM station_list WHERE ID=${stationId}`
 
@@ -112,7 +142,15 @@ export const getStationById: RequestHandler = async (req, res, _next) => {
       return
     }
 
-    const mergeResults = [...rows, ...departureCount, ...returnCount, ...departureAvgDistance, ...returnAvgDistance]
+    const mergeResults = [
+      ...rows,
+      ...departureCount,
+      ...returnCount,
+      ...departureAvgDistance,
+      ...returnAvgDistance,
+      [...top5ReturnStations],
+      [...top5DepartureStations],
+    ]
     res.json(mergeResults)
   })
 
