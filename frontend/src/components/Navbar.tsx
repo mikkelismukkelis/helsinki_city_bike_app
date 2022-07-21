@@ -17,13 +17,13 @@ const Navbar = () => {
         <Toolbar>
           <Button color="inherit">
             <Link className={location.pathname === '/' ? 'navlink active' : 'navlink'} to="/">
-              Journey data
+              Station list
             </Link>
           </Button>
 
           <Button color="inherit">
-            <Link className={location.pathname === '/stations' ? 'navlink active' : 'navlink'} to="/stations">
-              Station list
+            <Link className={location.pathname === '/journeys' ? 'navlink active' : 'navlink'} to="/journeys">
+              Journey data
             </Link>
           </Button>
         </Toolbar>

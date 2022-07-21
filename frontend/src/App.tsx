@@ -70,8 +70,9 @@ function App() {
         <CssBaseline />
         <Navbar />
         <Routes>
+          <Route path="/" element={<StationListView />} />
           <Route
-            path="/"
+            path="/journeys"
             element={
               <JourneyDataView
                 rows={rows}
@@ -82,7 +83,6 @@ function App() {
               />
             }
           />
-          <Route path="/stations" element={<StationListView />} />
           <Route path="/singlestation/:stationId" element={<SingleStationView />} />
         </Routes>
       </BrowserRouter>
