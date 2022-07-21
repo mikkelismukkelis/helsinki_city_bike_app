@@ -1,12 +1,9 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
-import './style.css'
+import '../style.css'
 
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import Button from '@mui/material/Button'
+import { AppBar, Box, Toolbar, Button } from '@mui/material'
 
 const Navbar = () => {
   const location = useLocation()

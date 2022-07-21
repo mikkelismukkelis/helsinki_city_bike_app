@@ -1,12 +1,11 @@
 import React, { useState, SetStateAction, Dispatch } from 'react'
 import axios from 'axios'
 
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
+import { Box, Container } from '@mui/material'
 
-import DepartureStationButtons from './DepartureStationButtons'
-import DataLoadingProgress from './DataLoadingProgress'
-import JourneyDataTable from './JourneyDataTable'
+import DepartureStationButtons from '../components/DepartureStationButtons'
+import DataLoadingProgress from '../components/DataLoadingProgress'
+import JourneyDataTable from '../components/JourneyDataTable'
 
 interface Data {
   rowid: number

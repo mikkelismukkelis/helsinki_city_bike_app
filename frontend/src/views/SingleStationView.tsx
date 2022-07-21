@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 import { Container, Button, Typography, Box } from '@mui/material'
-import MapComponent from './MapComponent'
+
+import MapComponent from '../components/MapComponent'
 
 const SingleStationView = () => {
   const [data, setData] = useState<any[]>([])

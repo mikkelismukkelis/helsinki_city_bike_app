@@ -5,10 +5,9 @@ import axios from 'axios'
 import CssBaseline from '@mui/material/CssBaseline'
 
 import Navbar from './components/Navbar'
-import JourneyDataView from './components/JourneyDataView'
-import StationListView from './components/StationListView'
-import MapComponent from './components/MapComponent'
-import SingleStationView from './components/SingleStationView'
+import JourneyDataView from './views/JourneyDataView'
+import StationListView from './views/StationListView'
+import SingleStationView from './views/SingleStationView'
 
 interface Data {
   rowid: number

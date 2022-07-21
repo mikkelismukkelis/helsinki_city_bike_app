@@ -1,7 +1,6 @@
 import React from 'react'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
+
+import { Stack, Button, Typography } from '@mui/material'
 
 interface Props {
   clickAlphabetButton: (e: React.MouseEvent<unknown>, beginLetter: string, endLetter: string) => void

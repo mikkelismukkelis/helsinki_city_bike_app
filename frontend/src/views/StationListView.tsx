@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
+import { Box, Container } from '@mui/material'
 
-import DataLoadingProgress from './DataLoadingProgress'
-import StationListTable from './StationListTable'
+import DataLoadingProgress from '../components/DataLoadingProgress'
+import StationListTable from '../components/StationListTable'
 
 // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 interface Data {

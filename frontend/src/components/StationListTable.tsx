@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
-
-import Box from '@mui/material/Box'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TablePagination from '@mui/material/TablePagination'
-import TableRow from '@mui/material/TableRow'
-import TableSortLabel from '@mui/material/TableSortLabel'
-import Paper from '@mui/material/Paper'
-import { visuallyHidden } from '@mui/utils'
-import TextField from '@mui/material/TextField'
-import { Button, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
+import '../style.css'
+
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Paper,
+  TextField,
+} from '@mui/material'
+import { visuallyHidden } from '@mui/utils'
 import { InfoOutlined } from '@mui/icons-material'
 
 interface Data {
