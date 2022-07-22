@@ -17,11 +17,9 @@ const queryDb = (command: string) => {
   })
 }
 
-// GET ALL JOURNEYS
 export const getJourneys: RequestHandler = (req, res, _next) => {
   const db = connectToDatabase()
 
-  // these are begin and end letters sent with request, used for sql query
   const beginLetter = req.query.beginLetter
   const endLetter = req.query.endLetter
 
@@ -38,7 +36,35 @@ export const getJourneys: RequestHandler = (req, res, _next) => {
   db.close()
 }
 
-// GET ALL STATIONS
+export const addJourney: RequestHandler = (req, res, _next) => {
+  const db = connectToDatabase()
+
+  const {
+    departure_date,
+    return_date,
+    departure_station_id,
+    departure_station_name,
+    return_station_id,
+    return_station_name,
+    covered_distance_m,
+    duration_s,
+  } = req.body
+
+  const sql = `INSERT INTO journey_data (departure, return, departure_station_id, departure_station_name, return_station_id, return_station_name, covered_distance_m, duration_s) 
+  VALUES('${departure_date}', '${return_date}', ${departure_station_id}, '${departure_station_name}', ${return_station_id}, '${return_station_name}', ${covered_distance_m}, ${duration_s})
+  RETURNING rowid`
+
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json({ success: `Data added succesfully`, rowid: rows[0].rowid })
+  })
+
+  db.close()
+}
+
 // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 export const getStations: RequestHandler = (_req, res, _next) => {
   const db = connectToDatabase()
@@ -51,6 +77,27 @@ export const getStations: RequestHandler = (_req, res, _next) => {
       return
     }
     res.json(rows)
+  })
+
+  db.close()
+}
+
+export const addStation: RequestHandler = (req, res, _next) => {
+  const db = connectToDatabase()
+
+  // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+  const { fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, Kapasiteet, x, y } = req.body
+
+  const sql = `INSERT INTO station_list (fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, Kapasiteet, x, y) 
+  VALUES('${fid}', '${id}', ${nimi}, '${namn}', ${name}, '${osoite}', ${adress}, ${kaupunki}, ${stad}, ${operaattor}, ${Kapasiteet}, ${x}, ${y})
+  RETURNING rowid`
+
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json({ success: `Data added succesfully`, rowid: rows[0].rowid })
   })
 
   db.close()
