@@ -9,25 +9,46 @@ import JourneyDataView from './views/JourneyDataView'
 import StationListView from './views/StationListView'
 import SingleStationView from './views/SingleStationView'
 
-import { JourneyData } from './typesInterfaces'
+import { JourneyData, StationData } from './typesInterfaces'
+
+const api = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api' : '/api'
 
 function App() {
-  const initData: JourneyData = {
-    rowid: 0,
-    departure_station_name: 'Data being fetched',
-    return_station_name: '...',
-    covered_distance_m: 0,
-    duration_s: 0,
-  }
-
-  const [rows, setRows] = useState<JourneyData[]>([initData])
+  const [stationRows, setStationRows] = useState<StationData[]>([])
+  const [stationDataLoading, setStationDataLoading] = useState(true)
+  const [journeyRows, setJourneyRows] = useState<JourneyData[]>([])
   const [initialDataLoading, setIninitialDataLoading] = useState(true)
   const [activeButton, setActiveButton] = useState('button1')
+
+  // Function to get journey data. Used by useefect and alphabetical range buttons
+  const getStationData = () => {
+    setStationDataLoading(true)
+
+    axios
+      .get<StationData[]>(`${api}/stations`)
+      .then((res) => {
+        setStationDataLoading(false)
+        setStationRows(res.data)
+      })
+      .catch((err) => {
+        console.log('Error in axios: ', err)
+        setStationDataLoading(false)
+
+        // TODO: if database is busy for example in data import and other problems. what we do? for now just alert.
+        if (err.message === 'Network Error') {
+          alert('Network Error. No connection to backend. Is backend running?')
+        } else if (err.response.data.error === 'SQLITE_BUSY: database is locked') {
+          alert(
+            'Database busy. Most propably data import is still ongoing. Please wait for a while and try refreshing page.'
+          )
+        }
+      })
+  }
 
   // Function to get initial journey data. Used by useefect
   const getJourneyData = () => {
     axios
-      .get<JourneyData[]>('http://localhost:3001/api/journeys', {
+      .get<JourneyData[]>(`${api}/journeys`, {
         params: {
           beginLetter: 'A',
           endLetter: 'H',
@@ -35,7 +56,7 @@ function App() {
       })
       .then((res) => {
         setIninitialDataLoading(false)
-        setRows(res.data)
+        setJourneyRows(res.data)
       })
       .catch((err) => {
         console.log('Error in axios: ', err)
@@ -54,6 +75,7 @@ function App() {
 
   // Useeffect to get initial data
   useEffect(() => {
+    getStationData()
     getJourneyData()
   }, [])
 
@@ -63,13 +85,13 @@ function App() {
         <CssBaseline />
         <Navbar />
         <Routes>
-          <Route path="/" element={<StationListView />} />
+          <Route path="/" element={<StationListView rows={stationRows} dataLoading={stationDataLoading} />} />
           <Route
             path="/journeys"
             element={
               <JourneyDataView
-                rows={rows}
-                setRows={setRows}
+                rows={journeyRows}
+                setRows={setJourneyRows}
                 initialDataLoading={initialDataLoading}
                 activeButton={activeButton}
                 setActiveButton={setActiveButton}
