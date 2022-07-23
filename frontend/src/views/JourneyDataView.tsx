@@ -7,17 +7,11 @@ import DepartureStationButtons from '../components/DepartureStationButtons'
 import DataLoadingProgress from '../components/DataLoadingProgress'
 import JourneyDataTable from '../components/JourneyDataTable'
 
-interface Data {
-  rowid: number
-  departure_station_name: string
-  return_station_name: string
-  covered_distance_m: number
-  duration_s: number
-}
+import { JourneyData } from '../typesInterfaces'
 
 interface Props {
-  rows: Data[]
-  setRows: Dispatch<SetStateAction<Data[]>>
+  rows: JourneyData[]
+  setRows: Dispatch<SetStateAction<JourneyData[]>>
   initialDataLoading: boolean
   activeButton: string
   setActiveButton: Dispatch<SetStateAction<string>>
@@ -26,12 +20,11 @@ interface Props {
 const JourneyDataView = ({ rows, setRows, initialDataLoading, activeButton, setActiveButton }: Props) => {
   const [dataLoading, setDataLoading] = useState(false)
 
-  // Function to get journey data. Used by useefect and alphabetical range buttons
   const getJourneyData = (beginLetter: string, endLetter: string, target?: HTMLButtonElement) => {
     setDataLoading(true)
 
     axios
-      .get<Data[]>('http://localhost:3001/api/journeys', {
+      .get<JourneyData[]>('http://localhost:3001/api/journeys', {
         params: {
           beginLetter,
           endLetter,

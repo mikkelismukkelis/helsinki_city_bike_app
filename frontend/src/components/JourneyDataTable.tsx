@@ -1,41 +1,9 @@
 import React, { useState } from 'react'
 
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-  Paper,
-} from '@mui/material'
-import { visuallyHidden } from '@mui/utils'
+import { Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper } from '@mui/material'
 
-interface Data {
-  rowid: number
-  departure_station_name: string
-  return_station_name: string
-  covered_distance_m: number
-  duration_s: number
-}
-
-interface HeadCell {
-  disablePadding: boolean
-  id: keyof Data
-  label: string
-  numeric: boolean
-}
-
-type Order = 'asc' | 'desc'
-
-interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void
-  order: Order
-  orderBy: string
-}
+import JourneyDataTableHeaders from './JourneyDataTableHeaders'
+import { JourneyData, Order } from '../typesInterfaces'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -56,82 +24,17 @@ function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-// departure_station_name, return_station_name, covered_distance_m, duration_s
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'departure_station_name',
-    numeric: false,
-    disablePadding: true,
-    label: 'Departure station name',
-  },
-  {
-    id: 'return_station_name',
-    numeric: false,
-    disablePadding: false,
-    label: 'Return station name',
-  },
-  {
-    id: 'covered_distance_m',
-    numeric: true,
-    disablePadding: false,
-    label: 'Covered distance (km)',
-  },
-  {
-    id: 'duration_s',
-    numeric: true,
-    disablePadding: false,
-    label: 'Duration (mins)',
-  },
-]
-
-const EnhancedTableHead = (props: EnhancedTableProps) => {
-  const { order, orderBy, onRequestSort } = props
-
-  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event, property)
-  }
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  )
-}
-
 interface TableProps {
-  rows: Data[]
+  rows: JourneyData[]
 }
 
 const JourneyDataTable = ({ rows }: TableProps) => {
   const [order, setOrder] = useState<Order>('asc')
-  const [orderBy, setOrderBy] = useState<keyof Data>('departure_station_name')
+  const [orderBy, setOrderBy] = useState<keyof JourneyData>('departure_station_name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof JourneyData) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
@@ -153,7 +56,7 @@ const JourneyDataTable = ({ rows }: TableProps) => {
     <Paper sx={{ width: '100%', mb: 2, marginTop: '30px' }}>
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
-          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+          <JourneyDataTableHeaders order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {rows
               .slice()

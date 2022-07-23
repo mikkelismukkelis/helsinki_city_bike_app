@@ -9,16 +9,10 @@ import JourneyDataView from './views/JourneyDataView'
 import StationListView from './views/StationListView'
 import SingleStationView from './views/SingleStationView'
 
-interface Data {
-  rowid: number
-  departure_station_name: string
-  return_station_name: string
-  covered_distance_m: number
-  duration_s: number
-}
+import { JourneyData } from './typesInterfaces'
 
 function App() {
-  const initData: Data = {
+  const initData: JourneyData = {
     rowid: 0,
     departure_station_name: 'Data being fetched',
     return_station_name: '...',
@@ -26,14 +20,14 @@ function App() {
     duration_s: 0,
   }
 
-  const [rows, setRows] = useState<Data[]>([initData])
+  const [rows, setRows] = useState<JourneyData[]>([initData])
   const [initialDataLoading, setIninitialDataLoading] = useState(true)
   const [activeButton, setActiveButton] = useState('button1')
 
   // Function to get initial journey data. Used by useefect
   const getJourneyData = () => {
     axios
-      .get<Data[]>('http://localhost:3001/api/journeys', {
+      .get<JourneyData[]>('http://localhost:3001/api/journeys', {
         params: {
           beginLetter: 'A',
           endLetter: 'H',

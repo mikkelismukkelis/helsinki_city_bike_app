@@ -34,7 +34,7 @@ const SingleStationView = () => {
           )
         }
       })
-  }, [])
+  }, [stationId])
 
   //   Check if data is ready, if yes return info component, if not return null. Data loading -message is in MapComponent
   const getInformation = () => {
@@ -46,7 +46,7 @@ const SingleStationView = () => {
   return (
     <Container>
       <Button sx={{ marginBottom: '20px' }} variant="contained" onClick={() => navigate(-1)}>
-        Back to list
+        Back
       </Button>
       <MapComponent markerData={markerData} />
       {getInformation()}

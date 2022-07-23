@@ -3,112 +3,15 @@ import { Link } from 'react-router-dom'
 
 import '../style.css'
 
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-  Paper,
-  TextField,
-} from '@mui/material'
-import { visuallyHidden } from '@mui/utils'
+import { Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Paper, TextField } from '@mui/material'
 import { InfoOutlined } from '@mui/icons-material'
 
-interface Data {
-  fid: number
-  id: number
-  nimi: string
-  namn: string
-  name: string
-  osoite: string
-  kaupunki: string
-  stad: string
-  Operaattor: string
-  kapasiteet: number
-  x: number
-  y: number
-}
+import StationListTableHead from './StationListTableHead'
+
+import { StationData, Order } from '../typesInterfaces'
 
 interface Props {
-  rows: Data[]
-}
-
-type Order = 'asc' | 'desc'
-
-interface HeadCell {
-  disablePadding: boolean
-  id: keyof Data
-  label: string
-  numeric: boolean
-}
-
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'nimi',
-    numeric: false,
-    disablePadding: true,
-    label: 'Name (click name for detailed information)',
-  },
-  {
-    id: 'osoite',
-    numeric: false,
-    disablePadding: false,
-    label: 'Address',
-  },
-  {
-    id: 'kaupunki',
-    numeric: false,
-    disablePadding: false,
-    label: 'City',
-  },
-]
-
-interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void
-  order: Order
-  orderBy: string
-}
-
-const EnhancedTableHead = (props: EnhancedTableProps) => {
-  const { order, orderBy, onRequestSort } = props
-
-  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event, property)
-  }
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  )
+  rows: StationData[]
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -132,18 +35,26 @@ function getComparator<Key extends keyof any>(
 
 const StationListTable = ({ rows }: Props) => {
   const [order, setOrder] = useState<Order>('asc')
-  const [orderBy, setOrderBy] = useState<keyof Data>('name')
+  const [orderBy, setOrderBy] = useState<keyof StationData>('name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
-  const [filteredRows, setFilteredRows] = useState<Data[]>([])
+  const [filteredRows, setFilteredRows] = useState<StationData[]>([])
+  const [filteredDataNotFound, setFilteredDataNotFound] = useState(false)
 
   const filterData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filterText = e.currentTarget.value
     const filteredData = rows.filter((row) => row.nimi.toLowerCase().includes(filterText.toLowerCase()))
-    setFilteredRows(filteredData)
+
+    if (filterText !== '' && filteredData.length === 0) {
+      setFilteredRows(filteredData)
+      setFilteredDataNotFound(true)
+    } else {
+      setFilteredRows(filteredData)
+      setFilteredDataNotFound(false)
+    }
   }
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof StationData) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
@@ -163,8 +74,9 @@ const StationListTable = ({ rows }: Props) => {
 
   // FUnction return either all rows or filtered rows
   const getRows = () => {
-    let selectedData: Data[] = []
-    if (filteredRows.length > 0) {
+    let selectedData: StationData[] = []
+
+    if (filteredRows.length > 0 || filteredDataNotFound) {
       selectedData = filteredRows
     } else {
       selectedData = rows
@@ -185,7 +97,7 @@ const StationListTable = ({ rows }: Props) => {
 
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'small'}>
-          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+          <StationListTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {getRows()
               .slice()

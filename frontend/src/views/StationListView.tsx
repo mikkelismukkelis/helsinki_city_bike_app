@@ -6,24 +6,10 @@ import { Box, Container } from '@mui/material'
 import DataLoadingProgress from '../components/DataLoadingProgress'
 import StationListTable from '../components/StationListTable'
 
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
-interface Data {
-  fid: number
-  id: number
-  nimi: string
-  namn: string
-  name: string
-  osoite: string
-  kaupunki: string
-  stad: string
-  Operaattor: string
-  kapasiteet: number
-  x: number
-  y: number
-}
+import { StationData } from '../typesInterfaces'
 
 const StationListView = () => {
-  const [rows, setRows] = useState<Data[]>([])
+  const [rows, setRows] = useState<StationData[]>([])
   const [dataLoading, setDataLoading] = useState(false)
 
   // Function to get journey data. Used by useefect and alphabetical range buttons
@@ -31,7 +17,7 @@ const StationListView = () => {
     setDataLoading(true)
 
     axios
-      .get<Data[]>('http://localhost:3001/api/stations')
+      .get<StationData[]>('http://localhost:3001/api/stations')
       .then((res) => {
         setDataLoading(false)
         setRows(res.data)

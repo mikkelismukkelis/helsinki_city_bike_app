@@ -1,14 +1,5 @@
 import React from 'react'
-import { styled } from '@mui/material/styles'
-import { Box, Paper, Grid, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}))
+import { Box, Grid, Typography, List, ListItem, ListItemText } from '@mui/material'
 
 interface Props {
   data: any[]
@@ -37,8 +28,6 @@ const SingleStationInfo = ({ data }: Props) => {
   const averageDistanceReturn = parseInt(data[4].average_distance_return)
   const top5ReturnStations: Top5Return[] = data[5]
   const top5DepartureStations: Top5Departure[] = data[6]
-
-  console.log('top5ReturnStations :>> ', top5ReturnStations)
 
   return (
     <Box sx={{ flexGrow: 1 }}>
