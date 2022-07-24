@@ -8,15 +8,24 @@ import Navbar from './components/Navbar'
 import JourneyDataView from './views/JourneyDataView'
 import StationListView from './views/StationListView'
 import SingleStationView from './views/SingleStationView'
+import AddJourney from './views/AddJourneyView'
 
 import { JourneyData, StationData } from './typesInterfaces'
 
 const api = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api' : '/api'
 
+const journeyInitData: JourneyData = {
+  rowid: 0,
+  departure_station_name: 'No data available',
+  return_station_name: '-',
+  covered_distance_m: 0,
+  duration_s: 0,
+}
+
 function App() {
   const [stationRows, setStationRows] = useState<StationData[]>([])
   const [stationDataLoading, setStationDataLoading] = useState(true)
-  const [journeyRows, setJourneyRows] = useState<JourneyData[]>([])
+  const [journeyRows, setJourneyRows] = useState<JourneyData[]>([journeyInitData])
   const [initialDataLoading, setIninitialDataLoading] = useState(true)
   const [activeButton, setActiveButton] = useState('button1')
 
@@ -99,6 +108,7 @@ function App() {
             }
           />
           <Route path="/singlestation/:stationId" element={<SingleStationView />} />
+          <Route path="/addjourney" element={<AddJourney stationData={stationRows} />} />
         </Routes>
       </BrowserRouter>
     </div>

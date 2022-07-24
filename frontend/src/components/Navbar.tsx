@@ -23,6 +23,12 @@ const Navbar = () => {
               Journey data
             </Link>
           </Button>
+
+          <Button color="inherit">
+            <Link className={location.pathname === '/addjourney' ? 'navlink active' : 'navlink'} to="/addjourney">
+              Add journey
+            </Link>
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>
