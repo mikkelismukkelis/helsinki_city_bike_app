@@ -7,7 +7,7 @@
     "start": "node dist/server.js",
     "build": "tsc --project .",
     "server": "nodemon --verbose --watch \"server\" --ext \"ts,json\" --exec ts-node src/server.ts",
-    "dev": "concurrently \"npm run server\""
+    "dev": "concurrently \"npm run server\" \"npm --prefix ../frontend/ run start"
   },
   "author": "MMu",
   "license": "ISC",
