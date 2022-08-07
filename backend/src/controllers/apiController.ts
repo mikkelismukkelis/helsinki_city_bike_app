@@ -82,6 +82,23 @@ export const getStations: RequestHandler = (_req, res, _next) => {
   db.close()
 }
 
+// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+export const getMaxStationIdAndFid: RequestHandler = (_req, res, _next) => {
+  const db = connectToDatabase()
+
+  const sql = `SELECT MAX(id) AS maxId, MAX(fid) AS maxFid FROM station_list`
+
+  db.all(sql, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message })
+      return
+    }
+    res.json(rows)
+  })
+
+  db.close()
+}
+
 export const addStation: RequestHandler = (req, res, _next) => {
   const db = connectToDatabase()
 
