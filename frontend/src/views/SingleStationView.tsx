@@ -48,6 +48,9 @@ const SingleStationView = () => {
       <Button sx={{ marginBottom: '20px' }} variant="contained" onClick={() => navigate(-1)}>
         Back
       </Button>
+      <Button sx={{ marginBottom: '20px', marginLeft: '20px' }} variant="contained" onClick={() => navigate('/')}>
+        Back to Station list
+      </Button>
       <MapComponent markerData={markerData} />
       {getInformation()}
     </Container>
