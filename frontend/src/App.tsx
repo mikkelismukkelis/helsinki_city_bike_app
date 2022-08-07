@@ -9,6 +9,7 @@ import JourneyDataView from './views/JourneyDataView'
 import StationListView from './views/StationListView'
 import SingleStationView from './views/SingleStationView'
 import AddJourney from './views/AddJourneyView'
+import AddStation from './views/AddStationView'
 
 import { JourneyData, StationData } from './typesInterfaces'
 
@@ -109,6 +110,7 @@ function App() {
           />
           <Route path="/singlestation/:stationId" element={<SingleStationView />} />
           <Route path="/addjourney" element={<AddJourney stationData={stationRows} />} />
+          <Route path="/addstation" element={<AddStation />} />
         </Routes>
       </BrowserRouter>
     </div>
