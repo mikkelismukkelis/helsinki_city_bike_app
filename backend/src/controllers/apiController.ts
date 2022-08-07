@@ -103,10 +103,10 @@ export const addStation: RequestHandler = (req, res, _next) => {
   const db = connectToDatabase()
 
   // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
-  const { fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, Kapasiteet, x, y } = req.body
+  const { fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, Operaattor, kapasiteet, x, y } = req.body
 
   const sql = `INSERT INTO station_list (fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, Kapasiteet, x, y) 
-  VALUES('${fid}', '${id}', ${nimi}, '${namn}', ${name}, '${osoite}', ${osoite}, ${kaupunki}, ${stad}, ${operaattor}, ${Kapasiteet}, ${x}, ${y})
+  VALUES(${fid}, ${id}, '${nimi}', '${namn}', '${name}', '${osoite}', '${osoite}', '${kaupunki}', '${stad}', '${Operaattor}', ${kapasiteet}, ${x}, ${y})
   RETURNING rowid`
 
   db.all(sql, (err, rows) => {
