@@ -41,7 +41,7 @@ SQLite was selected as database mainly because portability. This way requirement
 
 4. Start development mode: Go to <em>..\helsinki_city_bike_app\backend</em> -folder in terminal and run command `npm run dev`
 
-   - This starts both backend and frontend
+   - This starts both backend and frontend in same terminal
    - Important: When starting first time, database creation and data import is done automatically (see below paragraph <em>Automatic data import</em>). This could take couple of minutes to complete. Please look at terminal, this kind of new rows stops appearing when import is fully done: <em> [nodemon] files triggering change check: db.sqlite</em>
 
 5. Have fun :)
@@ -54,7 +54,7 @@ Run server in backend folder: `npm run server`
 
 Run client in frontend folder: `npm start`
 
-#### Automatic data import and database recreation
+#### Automatic data import
 
 Data of application is held in SQLite database.
 
@@ -64,4 +64,26 @@ After DB is created, then server checks <em>..\data_import</em> -folder for csv 
 
 So next times when server is restarted, it just checks import folder for csv files (founds none, nothing to import) and uses old database file with old data.
 
+#### Database recreation
+
 If database is needed to recreate, then just delete file <em>...\backend\db.sqlite</em> and move csv files to <em>..\data_import</em> -folder and restart server
+
+## TODOS
+
+App fullfills most of requirements of assignment. Here are some of things that should be done to improve application.
+
+- Real pagination: This app uses "fake" pagination. It just retrieves big junks of data and material UI table takes care of pagination. If done in good manner, pagination should be done in co-operation of UI and backend: part of data should be retrieved from database only when "next" is clicked or list is scrolled near to end or so.
+
+- Feedback to user: Now some feedback to user is done just via alerts, these should be replaced with nicer components, for example some toasters or so.
+
+- Add station coordinates: Couldn't find any subsriction free service for geocoding addresses. I think that this should be done in a way that user just types address and when submit is clicked, lat and long should be queried from geocode service in background and after retrieving those, data is written to database. (at the moment, some dummy values are hardcoded).
+
+- Styling: someone with more visual eye (designer?) should take a look and tell how to style app.
+
+- Language support: Now in data there was some data in three languages (Fin, Eng, Swe). This should be taken care somehow, is there language selection on UI or so...
+
+- More statistics: We could use some reporting library or tool to show data in interesting formats. Maybe embed some powerbi reports or so.
+
+- Data loaders when adding data to database
+
+- ...
