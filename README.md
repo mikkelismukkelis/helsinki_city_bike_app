@@ -33,23 +33,35 @@ SQLite was selected as database mainly because portability. This way requirement
 
 3. Download below csv files and place those into <em>..\helsinki_city_bike_app\backend\src\data_import</em> -folder.
 
-- https://dev.hsl.fi/citybikes/od-trips-2021/2021-05.csv
-- https://dev.hsl.fi/citybikes/od-trips-2021/2021-06.csv
-- https://dev.hsl.fi/citybikes/od-trips-2021/2021-07.csv
+   - https://dev.hsl.fi/citybikes/od-trips-2021/2021-05.csv
+   - https://dev.hsl.fi/citybikes/od-trips-2021/2021-06.csv
+   - https://dev.hsl.fi/citybikes/od-trips-2021/2021-07.csv
 
-- https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv
+   - https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv
 
-4. Start development mode: Go to <em>..\helsinki_city_bike_app\backend</em> folder in terminal and run command `npm run dev`
+4. Start development mode: Go to <em>..\helsinki_city_bike_app\backend</em> -folder in terminal and run command `npm run dev`
 
    - This starts both backend and frontend
    - Important: When starting first time, database creation and data import is done automatically (see below paragraph <em>Automatic data import</em>). This could take couple of minutes to complete. Please look at terminal, this kind of new rows stops appearing when import is fully done: <em> [nodemon] files triggering change check: db.sqlite</em>
 
 5. Have fun :)
 
-#### Automatic data import
+#### Separate processes for server and client
+
+Server and client can of course be running on seperate terminals, this way you can for example restart either one without restarting both. For this open two terminals. With other go to backend folder and with other to frontend.
+
+Run server in backend folder: `npm run server`
+
+Run client in frontend folder: `npm start`
+
+#### Automatic data import and database recreation
 
 Data of application is held in SQLite database.
 
 DB file is located in root of backend: <em>...\backend\db.sqlite</em>. When app is started first time, server creates database automatically and creates tables.
 
-After DB is created, then server checks import folder for csv files and imports data of those to database. When import of file is succesful, server moves csv file to <em>..\data_import\imported</em> -folder. So after everything goes well
+After DB is created, then server checks <em>..\data_import</em> -folder for csv files and imports data of those to database. When import of file is succesful, server moves csv file to <em>..\data_import\imported</em> -folder. So after everything goes well <em>..\data_import</em> -folder does not contain any .csv files.
+
+So next times when server is restarted, it just checks import folder for csv files (founds none, nothing to import) and uses old database file with old data.
+
+If database is needed to recreate, then just delete file <em>...\backend\db.sqlite</em> and move csv files to <em>..\data_import</em> -folder and restart server
