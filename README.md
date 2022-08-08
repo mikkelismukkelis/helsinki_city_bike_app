@@ -24,12 +24,15 @@ SQLite was selected as database mainly because portability. This way requirement
 
 #### To run app in local machine in develoment mode follow below instructions.
 
-1. Open terminal, go to folder where you want to copy repository and clone repository to your machine: `git clone https://github.com/mikkelismukkelis/helsinki_city_bike_app.git`
+1. Open terminal, go to folder where you want to copy repository and clone repository to your machine:
+   `git clone https://github.com/mikkelismukkelis/helsinki_city_bike_app.git`
 
 2. Install depencies, in terminal
 
-   - First go to folder <em>..\helsinki_city_bike_app\backend</em> and install depencies for backend with command: `npm install`
-   - Then go to folder <em>..\helsinki_city_bike_app\frontend</em> and install depencies for frontend with command:: `npm install`
+   - First go to folder <em>..\helsinki_city_bike_app\backend</em> and install depencies for backend with command:
+     `npm install`
+   - Then go to folder <em>..\helsinki_city_bike_app\frontend</em> and install depencies for frontend with command:
+     `npm install`
 
 3. Download below csv files and place those into <em>..\helsinki_city_bike_app\backend\src\data_import</em> -folder.
 
@@ -39,7 +42,8 @@ SQLite was selected as database mainly because portability. This way requirement
 
    - https://opendata.arcgis.com/datasets/726277c507ef4914b0aec3cbcfcbfafc_0.csv
 
-4. Start development mode: Go to <em>..\helsinki_city_bike_app\backend</em> -folder in terminal and run command `npm run dev`
+4. Start development mode: Go to <em>..\helsinki_city_bike_app\backend</em> -folder in terminal and run command:
+   `npm run dev`
 
    - This starts both backend and frontend in same terminal
    - Important: When starting first time, database creation and data import is done automatically (see below paragraph <em>Automatic data import</em>). This could take couple of minutes to complete. Please look at terminal, this kind of new rows stops appearing when import is fully done: <em> [nodemon] files triggering change check: db.sqlite</em>
