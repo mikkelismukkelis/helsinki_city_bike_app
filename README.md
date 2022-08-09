@@ -70,7 +70,7 @@ So next times when server is restarted, it just checks import folder for csv fil
 
 #### Database recreation
 
-If database is needed to recreate, then just delete file <em>...\backend\db.sqlite</em> and move csv files to <em>..\data_import</em> -folder and restart server
+If you want to recreate database for some reason, then just delete file <em>...\backend\db.sqlite</em> and move csv files back to <em>..\data_import</em> -folder and restart server, wait for couple of minutes for completion.
 
 ## TODOS
 
