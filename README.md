@@ -46,13 +46,13 @@ SQLite was selected as database mainly because portability. This way requirement
    `npm run dev`
 
    - This starts both backend and frontend in same terminal
-   - Important: When starting first time, database creation and data import is done automatically (see below paragraph <em>Automatic data import</em>). This could take couple of minutes to complete. Please look at terminal, this kind of new rows stops appearing when import is fully done: <em> [nodemon] files triggering change check: db.sqlite</em>
+   - **Important:** When starting first time, database creation and data import is done automatically (see below paragraph <em>Automatic data import</em>). This could take couple of minutes to complete. Please look at terminal, this kind of new rows stops appearing when import is fully done: <em> [nodemon] files triggering change check: db.sqlite</em>
 
 5. Have fun :)
 
 #### Separate processes for server and client
 
-Server and client can of course be running on seperate terminals, this way you can for example restart either one without restarting both. For this open two terminals. With other go to backend folder and with other to frontend.
+Instead of running both in same terminal, server and client can of course be running on seperate terminals. This way you can for example restart either one without restarting both. For this open two terminals, with other go to backend folder and with other to frontend:
 
 Run server in backend folder: `npm run server`
 
