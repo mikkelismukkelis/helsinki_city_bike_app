@@ -3,6 +3,7 @@ import { Database } from 'sqlite3'
 
 const databaseName = 'db.sqlite'
 
+// Check if database file exists, if yes, use old, if no: create new and create tables
 export const connectToDatabase = () => {
   if (fs.existsSync(databaseName)) {
     return new Database(databaseName)
@@ -36,8 +37,6 @@ function createJourneyDataTable(db: Database) {
 `)
 }
 
-// Stationlist csv headers
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 // station list table
 function createStationListTable(db: Database) {
   db.exec(`

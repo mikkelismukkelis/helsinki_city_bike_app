@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 
 import { connectToDatabase } from '../database/database'
 
-// We can quey db with promise way through this
+// Helper. We can quey db with promise way through this
 const queryDb = (command: string) => {
   const db = connectToDatabase()
 
@@ -17,55 +17,6 @@ const queryDb = (command: string) => {
   })
 }
 
-export const getJourneys: RequestHandler = (req, res, _next) => {
-  const db = connectToDatabase()
-
-  const beginLetter = req.query.beginLetter
-  const endLetter = req.query.endLetter
-
-  const sql = `SELECT rowid, departure_station_name, return_station_name, covered_distance_m, duration_s FROM journey_data WHERE SUBSTR(departure_station_name, 1, 1 )  BETWEEN '${beginLetter}' AND '${endLetter}' ORDER BY departure_station_name`
-
-  db.all(sql, (err, rows) => {
-    if (err) {
-      res.status(400).json({ error: err.message })
-      return
-    }
-    res.json(rows)
-  })
-
-  db.close()
-}
-
-export const addJourney: RequestHandler = (req, res, _next) => {
-  const db = connectToDatabase()
-
-  const {
-    departure_date,
-    return_date,
-    departure_station_id,
-    departure_station_name,
-    return_station_id,
-    return_station_name,
-    covered_distance_m,
-    duration_s,
-  } = req.body
-
-  const sql = `INSERT INTO journey_data (departure, return, departure_station_id, departure_station_name, return_station_id, return_station_name, covered_distance_m, duration_s) 
-  VALUES('${departure_date}', '${return_date}', ${departure_station_id}, '${departure_station_name}', ${return_station_id}, '${return_station_name}', ${covered_distance_m}, ${duration_s})
-  RETURNING rowid`
-
-  db.all(sql, (err, rows) => {
-    if (err) {
-      res.status(400).json({ error: err.message })
-      return
-    }
-    res.json({ success: `Data added succesfully`, rowid: rows[0].rowid })
-  })
-
-  db.close()
-}
-
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 export const getStations: RequestHandler = (_req, res, _next) => {
   const db = connectToDatabase()
 
@@ -82,7 +33,7 @@ export const getStations: RequestHandler = (_req, res, _next) => {
   db.close()
 }
 
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+// Before adding new station whis is used to quey current bigges id's.
 export const getMaxStationIdAndFid: RequestHandler = (_req, res, _next) => {
   const db = connectToDatabase()
 
@@ -102,8 +53,7 @@ export const getMaxStationIdAndFid: RequestHandler = (_req, res, _next) => {
 export const addStation: RequestHandler = (req, res, _next) => {
   const db = connectToDatabase()
 
-  // FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
-  const { fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, Operaattor, kapasiteet, x, y } = req.body
+  const { fid, id, nimi, namn, name, osoite, _adress, kaupunki, stad, Operaattor, kapasiteet, x, y } = req.body
 
   const sql = `INSERT INTO station_list (fid, id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, Kapasiteet, x, y) 
   VALUES(${fid}, ${id}, '${nimi}', '${namn}', '${name}', '${osoite}', '${osoite}', '${kaupunki}', '${stad}', '${Operaattor}', ${kapasiteet}, ${x}, ${y})
@@ -156,11 +106,11 @@ const getReturnAvgDistance = async (stationId: string) => {
 const getTop5ReturnStations = async (stationId: string) => {
   const returnValue = await queryDb(
     `SELECT return_station_name, return_station_id, count(*) AS return_count 
-FROM journey_data 
-WHERE departure_station_id = '${stationId}'
-GROUP BY return_station_name, return_station_id
-ORDER BY return_count DESC
-LIMIT 5`
+      FROM journey_data 
+      WHERE departure_station_id = '${stationId}'
+      GROUP BY return_station_name, return_station_id
+      ORDER BY return_count DESC
+      LIMIT 5`
   )
   return returnValue as any[]
 }
@@ -169,17 +119,16 @@ LIMIT 5`
 const getTop5DepartureStations = async (stationId: string) => {
   const returnValue = await queryDb(
     `SELECT departure_station_name, departure_station_id, count(*) AS departure_count 
-FROM journey_data 
-WHERE return_station_id = '${stationId}'
-GROUP BY departure_station_name, departure_station_id
-ORDER BY departure_count DESC
-LIMIT 5`
+      FROM journey_data 
+      WHERE return_station_id = '${stationId}'
+      GROUP BY departure_station_name, departure_station_id
+      ORDER BY departure_count DESC
+      LIMIT 5`
   )
   return returnValue as any[]
 }
 
-// GET ONE STATION BY ID
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+// THis is used to for getting all needed infromation about one station. This gathers all statistical data also and sends evetything together
 export const getStationById: RequestHandler = async (req, res, _next) => {
   const stationId = req.params.id
 
@@ -197,7 +146,6 @@ export const getStationById: RequestHandler = async (req, res, _next) => {
 
   const top5DepartureStations = await getTop5DepartureStations(stationId)
 
-  // all station information and merge all calculated results, send to client
   const sql = `SELECT * FROM station_list WHERE ID=${stationId}`
 
   db.all(sql, (err, rows) => {

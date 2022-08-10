@@ -1,19 +1,8 @@
 import { Router } from 'express'
 
-import {
-  getJourneys,
-  getStations,
-  getStationById,
-  addJourney,
-  addStation,
-  getMaxStationIdAndFid,
-} from '../controllers/apiController'
+import { getStations, getStationById, addStation, getMaxStationIdAndFid } from '../controllers/stationController'
 
 const router = Router()
-
-router.get('/journeys', getJourneys)
-
-router.post('/journey', addJourney)
 
 router.get('/stations', getStations)
 
