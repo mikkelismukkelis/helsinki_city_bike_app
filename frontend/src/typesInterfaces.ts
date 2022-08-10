@@ -6,7 +6,6 @@ export interface JourneyData {
   duration_s: number
 }
 
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 export interface StationData {
   fid: number
   id: number

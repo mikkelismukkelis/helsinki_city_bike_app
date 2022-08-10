@@ -11,7 +11,6 @@ interface EnhancedTableProps {
   orderBy: string
 }
 
-// departure_station_name, return_station_name, covered_distance_m, duration_s
 const headCells: readonly HeadCell[] = [
   {
     id: 'departure_station_name',

@@ -151,8 +151,6 @@ const AddJourney = ({ stationData }: Props) => {
       return
     }
 
-    // console.log(formValues)
-
     axios
       .post(`${api}/journey`, formValues)
       .then((res) => {

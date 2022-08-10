@@ -14,7 +14,6 @@ interface HeadCell {
   numeric: boolean
 }
 
-// FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
 const headCells: readonly HeadCell[] = [
   {
     id: 'nimi',
